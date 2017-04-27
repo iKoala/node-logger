@@ -21,6 +21,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "ssh://git@bitbucket/iKoala/ikoala-logger.git"
+    "url": "ssh://git@bitbucket.org/iKoala/ikoala-logger.git"
   }
 }

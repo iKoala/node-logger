@@ -18,5 +18,9 @@
   },
   "devDependencies": {
     "mocha": "^3.3.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "ssh://git@bitbucket/iKoala/ikoala-logger.git"
   }
 }

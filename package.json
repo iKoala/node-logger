@@ -2,14 +2,14 @@
   "name": "@ikoala/logger",
   "version": "1.0.7",
   "description": "custom logger for expressjs project",
-  "main": "index.js",
+  "main": "logger/index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "mocha logger/test"
   },
   "engines": {
     "node": ">=6.0.0"
   },
-  "keywords": [],
+  "keywords": ["logger", "winston", "console"],
   "author": "iKoala <iikoala@hotmail.com>",
   "license": "MIT",
   "dependencies": {
@@ -21,6 +21,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/iKoala/ikoala-logger.git"
+    "url": "https://bitbucket.org/iKoala/ikoala-logger"
   }
 }

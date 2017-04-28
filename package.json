@@ -21,6 +21,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://bitbucket.org/iKoala/ikoala-logger"
+    "url": "https://github.com/iKoala/node-logger.git"
   }
 }

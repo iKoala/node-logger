@@ -1,6 +1,6 @@
 {
   "name": "@ikoala/logger",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "custom logger for expressjs project",
   "main": "logger/index.js",
   "scripts": {
@@ -9,7 +9,11 @@
   "engines": {
     "node": ">=6.0.0"
   },
-  "keywords": ["logger", "winston", "console"],
+  "keywords": [
+    "logger",
+    "winston",
+    "console"
+  ],
   "author": "iKoala <iikoala@hotmail.com>",
   "license": "MIT",
   "dependencies": {

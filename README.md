@@ -10,3 +10,12 @@ Custom Logger for Expressjs Project
 #### Installation
 
 > npm install @ikoala/logger
+
+#### Usage
+
+```javascript
+const logger = require('@ikoala/logger');
+logger
+	.init()
+	.replaceConsole(); //replace console with @ikoala/logger
+```

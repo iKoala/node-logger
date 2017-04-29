@@ -1,0 +1,3 @@
+logger/test
+logger/test/**
+*.md

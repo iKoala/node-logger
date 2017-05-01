@@ -1,6 +1,6 @@
 {
   "name": "@ikoala/logger",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "custom logger for expressjs project",
   "main": "logger/index.js",
   "scripts": {

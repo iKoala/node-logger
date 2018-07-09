@@ -1,7 +1,6 @@
 'use strict';
 
-var util = require('util');
-var winston = require('winston');
+const { createLogger, format, transports } = require('winston');
 var _ = require('lodash');
 
 const ConsoleMethod = ['log', 'info', 'warn', 'error'];
@@ -11,19 +10,19 @@ var winstonLogger;
 var consoleDefaultMethods = {};
 
 _.each(ConsoleMethod, function(method) {
-	consoleDefaultMethods[method] = console[method];
+  consoleDefaultMethods[method] = console[method];
 });
 
 /**
  * @class
  */
 function Logger() {
-	this.silly = noop;
-	this.debug = console.log;
-	this.log = console.log;
-	this.info = console.info;
-	this.warn = console.warn;
-	this.error = console.error;
+  this.silly = noop;
+  this.debug = console.log;
+  this.log = console.log;
+  this.info = console.info;
+  this.warn = console.warn;
+  this.error = console.error;
 }
 
 /**
@@ -32,88 +31,74 @@ function Logger() {
  */
 Logger.prototype.init = function(opts) {
 
-	// winston.default.transports.console.timestamp = true;
-	// winston.default.transports.console.stderrLevels = {
-	// 	error: true,
-	// 	debug: false
-	// };
+  opts = opts || {};
 
-	// console.log(util.inspect(winston.default.transports.console), {showHidden:true});
+  var consoleOpts = {
+    level: 'debug',
+    stderrLevels: ['error', 'warn'],
+    format: format.combine(
+      format.colorize(),
+      format.timestamp(),
+      format.splat(),
+      format.printf(function(info) {
+        let message = info instanceof Error ? info.stack : info.message;
+        return `${info.timestamp} ${info.level}: ${message}`;
+      })
+    ),
+    transports: [
+      new transports.Console()
+    ]
+  };
 
-	if (!opts) {
-		opts = {};
-	}
+  consoleOpts = _.assign(consoleOpts, opts.console);
 
-	var consoleOpts = {
-		colorize: true,
-		prettyPrint: true,
-		level: 'debug',
-		stderrLevels: ['error', 'warn'],
-		timestamp: true
-	};
+  winstonLogger = createLogger(consoleOpts);
 
-	consoleOpts = _.assign(consoleOpts, opts.console);
+  // winston.add(winston.transports.File, {
+  // 	filename: '../logs/app-info.log',
+  // 	level: 'debug',
+  // 	maxsize: 10 * 1024 * 1024, //10mb
+  // 	maxFiles: 10,
+  // 	prettyPrint: true,
+  // 	tailable: true
+  // });
 
-	winstonLogger = new(winston.Logger)({
-		transports: [
-			new(winston.transports.Console)(consoleOpts)
-		]
-	});
+  if (defaultLogger) {
+    defaultLogger.debug = winstonLogger.debug;
+    //winston.log is a parent method for all levels, e.g. .log('debug', 'message')
+    //so replace .log with .verbose
+    defaultLogger.log = defaultLogger.verbose = winstonLogger.verbose;
+    defaultLogger.info = winstonLogger.info;
+    defaultLogger.warn = winstonLogger.warn;
+    defaultLogger.error = winstonLogger.error;
+  }
 
-	// winston.remove(winston.transports.Console);
-	// winston.add(winston.transports.Console, consoleOpts);
-
-	// timestamp: function() {
-	// return (new Date()).toISOString();
-	// return new Date();
-	// }
-	// });
-
-	// winston.add(winston.transports.File, {
-	// 	filename: '../logs/app-info.log',
-	// 	level: 'debug',
-	// 	maxsize: 10 * 1024 * 1024, //10mb
-	// 	maxFiles: 10,
-	// 	prettyPrint: true,
-	// 	tailable: true
-	// });
-
-	if (defaultLogger) {
-		defaultLogger.debug = winstonLogger.debug;
-		//winston.log is a parent method for all levels, e.g. .log('debug', 'message')
-		//so replace .log with .verbose
-		defaultLogger.log = defaultLogger.verbose = winstonLogger.verbose;
-		defaultLogger.info = winstonLogger.info;
-		defaultLogger.warn = winstonLogger.warn;
-		defaultLogger.error = winstonLogger.error;
-	}
-
-	return this;
+  return this;
 };
 
 /**
  * Wrapper for express.js + morgan
  */
 Logger.prototype.stream = {
-	write: function(message, encoding) {
-		defaultLogger.info(message);
-	}
+  write: function(message, encoding) {
+    defaultLogger.info(message);
+  }
 };
 
 Logger.prototype.replaceConsole = () => {
-	console.debug = defaultLogger.debug;
-	console.log = defaultLogger.debug;
-	console.info = defaultLogger.info;
-	console.warn = defaultLogger.warn;
-	console.error = defaultLogger.error;
-	return this;
+  console.debug = defaultLogger.debug;
+  console.log = defaultLogger.verbose;
+  console.info = defaultLogger.info;
+  console.warn = defaultLogger.warn;
+  console.error = defaultLogger.error;
+  return this;
 };
 
 Logger.prototype.restoreConsole = () => {
-	_.each(ConsoleMethod, function(method) {
-		console[method] = consoleDefaultMethods[method];
-	});
-	return this;
+  _.each(ConsoleMethod, function(method) {
+    console[method] = consoleDefaultMethods[method];
+  });
+  return this;
 };
 
 var defaultLogger = new Logger();

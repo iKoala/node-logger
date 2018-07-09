@@ -38,7 +38,12 @@ Logger.prototype.init = function(opts) {
     stderrLevels: ['error', 'warn'],
     format: format.combine(
       format.colorize(),
-      format.timestamp(),
+      format.timestamp({
+        format: function() {
+          // return new Date().toISOString();
+          return new Date().toString()
+        }
+      }),
       format.splat(),
       format.printf(function(info) {
         let message = info instanceof Error ? info.stack : info.message;

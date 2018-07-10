@@ -1,7 +1,13 @@
 'use strict';
 
+const util = require('util');
 const { createLogger, format, transports } = require('winston');
 var _ = require('lodash');
+
+// var winston = require('winston');
+// winston.level = 'debug';
+// winston.add(new winston.transports.Console());
+// winston.debug({});
 
 const ConsoleMethod = ['log', 'info', 'warn', 'error'];
 
@@ -46,7 +52,9 @@ Logger.prototype.init = function(opts) {
       }),
       format.splat(),
       format.printf(function(info) {
-        let message = info instanceof Error ? info.stack : info.message;
+        let message = info.message;
+        if (info instanceof Error) { message = info.stack; }
+        if (typeof message === 'object' || Array.isArray(message)) { message = util.inspect(message); }
         return `${info.timestamp} ${info.level}: ${message}`;
       })
     ),

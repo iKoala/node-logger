@@ -3,19 +3,27 @@
 const logger = require('../index');
 
 const LOG_STR = 'test string without error';
-const DUMMY_OBJ = {foo: 'bar'};
+const DUMMY_ARR = ['foo', 'bar'];
+const DUMMY_OBJ = {foo : 'bar'};
 const ERROR_OBJ = new Error('test error object');
 
-describe('Test logger with winston', function() {
+describe.only('Test logger with winston', function() {
   before('#init', function() {
     logger.init();
   });
 
   it('should #log string without error', function() {
+    logger.log(null);
+    logger.log(LOG_STR);
     logger.log('%s', LOG_STR);
   });
 
-  it('should #log an object', function() {
+  it('should #log object and Array', function() {
+    logger.log([]);
+    logger.log(DUMMY_ARR);
+    logger.log('%j', DUMMY_ARR);
+    logger.log({});
+    logger.log(DUMMY_OBJ);
     logger.log('%j', DUMMY_OBJ);
   });
 
@@ -31,12 +39,18 @@ describe('Test #replaceConsole', function() {
   });
 
   it('should #log string without error', function() {
-    console.log('%s', LOG_STR);
+    logger.log(null);
+    logger.log(LOG_STR);
+    logger.log('%s', LOG_STR);
   });
 
   it('should use #error to display error object', function() {
-    console.error(ERROR_OBJ);
-    // console.error('%s', ERROR_OBJ.message);
+    logger.log([]);
+    logger.log(DUMMY_ARR);
+    logger.log('%j', DUMMY_ARR);
+    logger.log({});
+    logger.log(DUMMY_OBJ);
+    logger.log('%j', DUMMY_OBJ);
   });
 
   after('#restoreConsole', function() {

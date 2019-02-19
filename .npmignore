@@ -1,3 +1,2 @@
-logger/test
+node_modules/**
 logger/test/**
-*.md

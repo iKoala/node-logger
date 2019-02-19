@@ -1,21 +1,21 @@
 'use strict';
 
-const util = require('util');
+// const util = require('util');
 const { createLogger, format, transports } = require('winston');
-var _ = require('lodash');
+// var _ = require('lodash');
 
 // var winston = require('winston');
 // winston.level = 'debug';
 // winston.add(new winston.transports.Console());
 // winston.debug({});
 
-const ConsoleMethod = ['log', 'info', 'warn', 'error'];
+const ConsoleMethods = ['log', 'info', 'warn', 'error'];
 
 var noop = function() {}; //dummy function
 var winstonLogger;
 var consoleDefaultMethods = {};
 
-_.each(ConsoleMethod, function(method) {
+ConsoleMethods.forEach(function(method) {
   consoleDefaultMethods[method] = console[method];
 });
 
@@ -47,14 +47,14 @@ Logger.prototype.init = function(opts) {
       format.timestamp({
         format: function() {
           // return new Date().toISOString();
-          return new Date().toString()
+          return new Date().toString();
         }
       }),
       format.splat(),
       format.printf(function(info) {
         let message = info.message;
         if (info instanceof Error) { message = info.stack; }
-        if (typeof message === 'object' || Array.isArray(message)) { message = util.inspect(message); }
+        if (typeof message === 'object' || Array.isArray(message)) { message = JSON.stringify(message); }
         return `${info.timestamp} ${info.level}: ${message}`;
       })
     ),
@@ -63,7 +63,7 @@ Logger.prototype.init = function(opts) {
     ]
   };
 
-  consoleOpts = _.assign(consoleOpts, opts.console);
+  consoleOpts = Object.assign(consoleOpts, opts.console);
 
   winstonLogger = createLogger(consoleOpts);
 
@@ -77,13 +77,13 @@ Logger.prototype.init = function(opts) {
   // });
 
   if (defaultLogger) {
-    defaultLogger.debug = winstonLogger.debug;
+    defaultLogger.debug = winstonLogger.debug.bind(winstonLogger);
     //winston.log is a parent method for all levels, e.g. .log('debug', 'message')
     //so replace .log with .verbose
-    defaultLogger.log = defaultLogger.verbose = winstonLogger.verbose;
-    defaultLogger.info = winstonLogger.info;
-    defaultLogger.warn = winstonLogger.warn;
-    defaultLogger.error = winstonLogger.error;
+    defaultLogger.log = defaultLogger.verbose = winstonLogger.verbose.bind(winstonLogger);
+    defaultLogger.info = winstonLogger.info.bind(winstonLogger);
+    defaultLogger.warn = winstonLogger.warn.bind(winstonLogger);
+    defaultLogger.error = winstonLogger.error.bind(winstonLogger);
   }
 
   return this;
@@ -108,8 +108,8 @@ Logger.prototype.replaceConsole = () => {
 };
 
 Logger.prototype.restoreConsole = () => {
-  _.each(ConsoleMethod, function(method) {
-    console[method] = consoleDefaultMethods[method];
+  ConsoleMethods.forEach(function(method) {
+    console[method] = consoleDefaultMethods[method];// body...
   });
   return this;
 };

@@ -27,7 +27,7 @@ describe.only('Test logger with winston', function() {
     logger.log('%j', DUMMY_OBJ);
   });
 
-  it('should #error string without error', function() {
+  it('should logger#error error object', function() {
     logger.error(ERROR_OBJ);
   });
 });
